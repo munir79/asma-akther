@@ -13,11 +13,11 @@ export default function CustomerMomentsGallery() {
   const filteredGallery = galleryItems.filter(
     (item) => activeCategory === "all" || item.category === activeCategory
   );
-
+  // update and ok 
   return (
     <section id="gallery" className="py-20 bg-[#0c0e14] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-bold uppercase tracking-wider mb-3">
@@ -38,11 +38,10 @@ export default function CustomerMomentsGallery() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
-                activeCategory === cat.id
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${activeCategory === cat.id
                   ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white border-orange-500 shadow-md shadow-orange-600/20"
                   : "bg-[#151922] text-gray-400 border-gray-800 hover:text-white hover:border-gray-700"
-              }`}
+                }`}
             >
               {cat.label}
             </button>
@@ -129,7 +128,7 @@ export default function CustomerMomentsGallery() {
                           <FaCheckCircle className="text-emerald-400 text-xs" title="Verified Foodie" />
                         )}
                       </div>
-                      
+
                       {/* Customer Location Badge */}
                       <div className="flex items-center gap-1.5 text-xs text-amber-400 font-medium mt-1 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-md self-start inline-flex">
                         <FaMapMarkerAlt className="text-[10px]" />
