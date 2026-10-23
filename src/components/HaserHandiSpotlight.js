@@ -8,8 +8,6 @@ import {
   FaCheck,
   FaShoppingBag,
   FaPepperHot,
-  FaPlay,
-  FaPause,
   FaYoutube
 } from "react-icons/fa";
 
@@ -17,7 +15,6 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
   const [selectedSpice, setSelectedSpice] = useState("Spicy (ঝাল)");
   const [selectedPortion, setSelectedPortion] = useState("Regular Handi (1-2 persons)");
   const [isAdded, setIsAdded] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
   const cardVideoRef = useRef(null);
@@ -55,7 +52,7 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
     };
   }, []);
 
-  // Handle autoPlay and tab visibility change so video resumes automatically (always muted)
+  // Handle autoPlay and tab visibility change so video resumes automatically (always muted and continuously playing)
   useEffect(() => {
     const video = cardVideoRef.current;
     if (!video || !shouldLoadVideo) return;
@@ -64,16 +61,12 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
     video.defaultMuted = true;
     const playPromise = video.play();
     if (playPromise !== undefined) {
-      playPromise
-        .then(() => setIsPlaying(true))
-        .catch(() => {
-          setIsPlaying(false);
-        });
+      playPromise.catch(() => {});
     }
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible" && cardVideoRef.current) {
-        cardVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+        cardVideoRef.current.play().catch(() => {});
       }
     };
 
@@ -83,23 +76,6 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
     };
   }, [shouldLoadVideo]);
 
-  // Play / Pause toggle
-  const togglePlay = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    const video = cardVideoRef.current;
-    if (!video) return;
-
-    if (video.paused) {
-      video.play().then(() => setIsPlaying(true)).catch(() => {});
-    } else {
-      video.pause();
-      setIsPlaying(false);
-    }
-  };
-
   // Auto-restart from beginning when video ends (never gets stuck on mobile)
   const handleVideoEnded = () => {
     const video = cardVideoRef.current;
@@ -107,12 +83,12 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
       video.currentTime = 0;
       const playPromise = video.play();
       if (playPromise !== undefined) {
-        playPromise.then(() => setIsPlaying(true)).catch(() => {});
+        playPromise.catch(() => {});
       }
     }
   };
 
-  // Safeguard for mobile browsers: if video gets within 200ms of end without triggering loop event
+  // Safeguard for mobile browsers: if video gets within 250ms of end without triggering loop event
   const handleTimeUpdate = () => {
     const video = cardVideoRef.current;
     if (!video || !video.duration) return;
@@ -120,7 +96,7 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
       video.currentTime = 0;
       const playPromise = video.play();
       if (playPromise !== undefined) {
-        playPromise.then(() => setIsPlaying(true)).catch(() => {});
+        playPromise.catch(() => {});
       }
     }
   };
@@ -128,7 +104,7 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
   // Resume smoothly if mobile browser buffers or stalls
   const handleStalled = () => {
     const video = cardVideoRef.current;
-    if (video && isPlaying && video.paused) {
+    if (video && video.paused) {
       video.play().catch(() => {});
     }
   };
@@ -198,8 +174,6 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
                 onTimeUpdate={handleTimeUpdate}
                 onStalled={handleStalled}
                 onWaiting={handleStalled}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
                 className="w-full h-full object-cover"
               >
                 {shouldLoadVideo && (
@@ -215,22 +189,6 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
               <div className="absolute top-4 left-4 bg-orange-600/95 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-lg z-10 pointer-events-none">
                 <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
                 <span>সফলতা এমনেই আসে না - আসমা আক্তার</span>
-              </div>
-
-              {/* Controls: Play/Pause Toggle Button */}
-              <div className="absolute top-4 right-4 z-20 flex items-center">
-                <button
-                  type="button"
-                  onClick={togglePlay}
-                  className="bg-black/80 hover:bg-orange-600 text-white text-xs w-9 h-9 rounded-full backdrop-blur-md border border-white/20 transition-all shadow-md flex items-center justify-center cursor-pointer active:scale-95"
-                  aria-label={isPlaying ? "Pause video" : "Play video"}
-                >
-                  {isPlaying ? (
-                    <FaPause className="text-[11px]" />
-                  ) : (
-                    <FaPlay className="text-[11px] ml-0.5 text-orange-400" />
-                  )}
-                </button>
               </div>
 
               {/* Bottom Bar on Video with YouTube Story Link */}
