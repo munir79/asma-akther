@@ -62,29 +62,30 @@ export default function CartDrawer({
         className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-[#12151e] border-l border-gray-800 text-white flex flex-col shadow-2xl">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 pointer-events-auto">
+        <div className="w-full sm:w-[420px] max-w-full bg-[#12151e] border-l border-gray-800 text-white flex flex-col shadow-2xl h-full">
           
           {/* Header */}
-          <div className="p-5 border-b border-gray-800 flex items-center justify-between bg-[#151924]">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-orange-600/20 text-orange-400 flex items-center justify-center">
+          <div className="p-4 sm:p-5 border-b border-gray-800 flex items-center justify-between bg-[#151924] shrink-0 gap-3">
+            <div className="flex items-center gap-2.5 min-w-0 pr-1">
+              <div className="w-9 h-9 rounded-xl bg-orange-600/20 text-orange-400 flex items-center justify-center shrink-0">
                 <FaShoppingBag />
               </div>
-              <div>
-                <h3 className="text-base font-bold text-white">Your Food Basket</h3>
-                <span className="text-xs text-gray-400">
+              <div className="min-w-0 truncate">
+                <h3 className="text-sm sm:text-base font-bold text-white truncate">Your Food Basket</h3>
+                <span className="text-[11px] sm:text-xs text-gray-400 block truncate">
                   {cartItems.length} {cartItems.length === 1 ? "dish" : "dishes"} selected
                 </span>
               </div>
             </div>
 
             <button
+              type="button"
               onClick={onClose}
               aria-label="Close cart drawer"
-              className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+              className="w-10 h-10 rounded-xl text-gray-300 hover:text-white bg-gray-800/80 hover:bg-orange-600 transition-colors shrink-0 flex items-center justify-center cursor-pointer shadow-sm border border-gray-700/60 active:scale-95"
             >
-              <FaTimes className="text-lg" />
+              <FaTimes className="text-base" />
             </button>
           </div>
 

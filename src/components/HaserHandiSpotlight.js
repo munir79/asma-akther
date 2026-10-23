@@ -8,8 +8,6 @@ import {
   FaCheck,
   FaShoppingBag,
   FaPepperHot,
-  FaVolumeMute,
-  FaVolumeUp,
   FaPlay,
   FaPause,
   FaYoutube
@@ -19,7 +17,6 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
   const [selectedSpice, setSelectedSpice] = useState("Spicy (ঝাল)");
   const [selectedPortion, setSelectedPortion] = useState("Regular Handi (1-2 persons)");
   const [isAdded, setIsAdded] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
@@ -58,28 +55,18 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
     };
   }, []);
 
-  // Sync muted state directly to DOM element whenever isMuted changes
-  useEffect(() => {
-    const video = cardVideoRef.current;
-    if (!video) return;
-    video.muted = isMuted;
-    if (!isMuted) {
-      video.volume = 1.0;
-    }
-  }, [isMuted]);
-
-  // Handle autoPlay and tab visibility change so video resumes automatically
+  // Handle autoPlay and tab visibility change so video resumes automatically (always muted)
   useEffect(() => {
     const video = cardVideoRef.current;
     if (!video || !shouldLoadVideo) return;
 
-    video.muted = isMuted;
+    video.muted = true;
+    video.defaultMuted = true;
     const playPromise = video.play();
     if (playPromise !== undefined) {
       playPromise
         .then(() => setIsPlaying(true))
         .catch(() => {
-          // Autoplay with sound or battery saver prevented, keep playing state synced
           setIsPlaying(false);
         });
     }
@@ -95,33 +82,6 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [shouldLoadVideo]);
-
-  // Dedicated sound toggle inside direct user click gesture (works on iOS Safari and mobile Chrome)
-  const toggleMute = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    const video = cardVideoRef.current;
-    if (!video) return;
-
-    if (isMuted) {
-      video.muted = false;
-      video.volume = 1.0;
-      setIsMuted(false);
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlaying(true))
-          .catch((err) => {
-            console.warn("Unmute play note:", err);
-          });
-      }
-    } else {
-      video.muted = true;
-      setIsMuted(true);
-    }
-  };
 
   // Play / Pause toggle
   const togglePlay = (e) => {
@@ -228,7 +188,7 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
                 ref={cardVideoRef}
                 autoPlay
                 loop
-                muted={isMuted}
+                muted
                 playsInline
                 webkit-playsinline="true"
                 x5-playsinline="true"
@@ -257,43 +217,18 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
                 <span>সফলতা এমনেই আসে না - আসমা আক্তার</span>
               </div>
 
-              {/* Controls: Play/Pause and Audio Toggle */}
-              <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-                {/* Play / Pause Toggle Button */}
+              {/* Controls: Play/Pause Toggle Button */}
+              <div className="absolute top-4 right-4 z-20 flex items-center">
                 <button
                   type="button"
                   onClick={togglePlay}
-                  className="bg-black/80 hover:bg-orange-600 text-white text-xs w-8 h-8 rounded-full backdrop-blur-md border border-white/20 transition-all shadow-md flex items-center justify-center cursor-pointer"
+                  className="bg-black/80 hover:bg-orange-600 text-white text-xs w-9 h-9 rounded-full backdrop-blur-md border border-white/20 transition-all shadow-md flex items-center justify-center cursor-pointer active:scale-95"
                   aria-label={isPlaying ? "Pause video" : "Play video"}
                 >
                   {isPlaying ? (
-                    <FaPause className="text-[10px]" />
+                    <FaPause className="text-[11px]" />
                   ) : (
-                    <FaPlay className="text-[10px] ml-0.5 text-orange-400" />
-                  )}
-                </button>
-
-                {/* Sound Unmute / Mute Button */}
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  className={`text-xs px-3.5 py-1.5 rounded-full backdrop-blur-md border transition-all shadow-md flex items-center gap-1.5 cursor-pointer font-bold ${
-                    isMuted
-                      ? "bg-black/80 hover:bg-orange-600 text-white border-white/20"
-                      : "bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-emerald-500/30 animate-pulse"
-                  }`}
-                  aria-label={isMuted ? "Unmute video" : "Mute video"}
-                >
-                  {isMuted ? (
-                    <>
-                      <FaVolumeMute className="text-amber-400" />
-                      <span className="text-[11px]">Sound Off</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaVolumeUp className="text-white" />
-                      <span className="text-[11px]">Sound On</span>
-                    </>
+                    <FaPlay className="text-[11px] ml-0.5 text-orange-400" />
                   )}
                 </button>
               </div>
