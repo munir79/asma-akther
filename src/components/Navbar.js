@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaFire,
@@ -47,8 +48,15 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
           
           {/* Brand Logo - Fully Responsive & Prevents Text Break */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3.5 group min-w-0">
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-orange-500 via-amber-500 to-red-600 flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:scale-105 transition-transform shrink-0">
-              <FaFire className="text-white text-base sm:text-xl animate-pulse" />
+            <div className="relative w-8.5 h-11 sm:w-10 sm:h-13 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Image
+                src="/images/logo/aslogo.png"
+                alt="Asma Akter Logo"
+                width={40}
+                height={52}
+                priority
+                className="w-auto h-full object-contain filter drop-shadow-[0_2px_8px_rgba(249,115,22,0.35)]"
+              />
             </div>
             
             <div className="min-w-0">
@@ -166,8 +174,14 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
               {/* Drawer Header */}
               <div className="p-4 sm:p-5 border-b border-gray-800 flex items-center justify-between bg-[#11141d]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-lg font-bold shadow-md shrink-0">
-                    <FaFire />
+                  <div className="relative w-8 h-10 flex items-center justify-center shrink-0">
+                    <Image
+                      src="/images/logo/aslogo.png"
+                      alt="Asma Akter Logo"
+                      width={32}
+                      height={40}
+                      className="w-auto h-full object-contain filter drop-shadow-[0_2px_8px_rgba(249,115,22,0.35)]"
+                    />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">

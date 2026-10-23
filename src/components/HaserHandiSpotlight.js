@@ -10,7 +10,8 @@ import {
   FaPepperHot,
   FaVolumeMute,
   FaVolumeUp,
-  FaFilm
+  FaFilm,
+  FaYoutube
 } from "react-icons/fa";
 
 export default function HaserHandiSpotlight({ onAddToCart }) {
@@ -20,31 +21,22 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
   const [isMuted, setIsMuted] = useState(true);
   const [showVideo, setShowVideo] = useState(true);
 
-  const bgVideoRef = useRef(null);
   const cardVideoRef = useRef(null);
 
-  // Guarantee that autoplay is never blocked by browser policies
+  // Guarantee that autoplay starts smoothly without browser restrictions
   useEffect(() => {
-    if (bgVideoRef.current) {
-      bgVideoRef.current.defaultMuted = true;
-      bgVideoRef.current.muted = true;
-      bgVideoRef.current.play().catch(() => { });
-    }
     if (cardVideoRef.current) {
       cardVideoRef.current.defaultMuted = true;
-      cardVideoRef.current.muted = true;
+      cardVideoRef.current.muted = isMuted;
       cardVideoRef.current.play().catch(() => { });
     }
-  }, [showVideo]);
+  }, [showVideo, isMuted]);
 
   const toggleMute = () => {
     const nextMuted = !isMuted;
     setIsMuted(nextMuted);
     if (cardVideoRef.current) {
       cardVideoRef.current.muted = nextMuted;
-    }
-    if (bgVideoRef.current) {
-      bgVideoRef.current.muted = nextMuted;
     }
   };
 
@@ -72,27 +64,10 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
   };
 
   return (
-    <section id="signature-handi" className="relative py-20 lg:py-28 overflow-hidden bg-[#090b10]">
-      {/* Background Video Layer: Ambient Video of Asma's Journey */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <video
-          ref={bgVideoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover opacity-60 scale-105 filter brightness-90"
-        >
-          <source src="/video/haser-handi-story.webm" type="video/webm" />
-          <source src={`/video/${encodeURI("সফলতা এমনেই আসে না_ এর পেছনে লুকিয়ে থাকে কষ্ট আর পরিশ্রম । (4_7894.webm")}`} type="video/webm" />
-        </video>
-
-        {/* Ambient Dark Gradient Overlays for High Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c11]/90 via-[#0a0c11]/55 to-[#0a0c11]/90 pointer-events-none" />
-      </div>
-
-      {/* Decorative Warm Radial Glow */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-orange-600/15 rounded-full blur-[140px] pointer-events-none z-[1]" />
+    <section id="signature-handi" className="relative py-20 lg:py-28 overflow-hidden bg-[#0a0c12]">
+      {/* Decorative Warm Ambient Glows */}
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-orange-600/10 rounded-full blur-[140px] pointer-events-none z-[1]" />
+      <div className="absolute top-1/3 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-[130px] pointer-events-none z-[1]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -105,109 +80,63 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-md">
             The Famous <span className="text-gradient-flame">Hāser Hāndi (হাঁসের হাঁড়ি)</span>
           </h2>
-          <p className="mt-4 text-gray-200 text-sm sm:text-base leading-relaxed drop-shadow-sm font-normal">
+          <p className="mt-4 text-gray-300 text-sm sm:text-base leading-relaxed drop-shadow-sm font-normal">
             Asma Akter’s renowned recipe that has captured the hearts of foodies across Bangladesh. Cooked slowly inside handmade clay pots to lock in rich, earthy aromas.
           </p>
         </div>
 
-        {/* Feature Grid */}
+        {/* Feature Grid: Left Side Video & Right Side Content */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 
-          {/* Left Visual Column: Featured Real Video Player + Dish Photo Toggle */}
+          {/* Left Visual Column: Featured Real Video Player with Story link */}
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-2 border-amber-500/40 shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(245,158,11,0.25)] group bg-black">
-              {showVideo ? (
-                <div className="relative w-full h-full">
-                  <video
-                    ref={cardVideoRef}
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
-                    className="w-full h-full object-cover"
-                  >
-                    <source src="/video/haser-handi-story.webm" type="video/webm" />
-                    <source src={`/video/${encodeURI("সফলতা এমনেই আসে না_ এর পেছনে লুকিয়ে থাকে কষ্ট আর পরিশ্রম । (4_7894.webm")}`} type="video/webm" />
-                  </video>
+              <video
+                ref={cardVideoRef}
+                autoPlay
+                loop
+                muted={isMuted}
+                playsInline
+                className="w-full h-full object-cover"
+              >
+                <source src="/video/haser-handi-story.webm" type="video/webm" />
+                <source src={`/video/${encodeURI("সফলতা এমনেই আসে না_ এর পেছনে লুকিয়ে থাকে কষ্ট আর পরিশ্রম । (4_7894.webm")}`} type="video/webm" />
+              </video>
 
-                  {/* Top Live Badge */}
-                  <div className="absolute top-4 left-4 bg-orange-600/95 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-lg z-10">
-                    <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                    <span>সফলতা এমনেই আসে না - আসমা আক্তার</span>
-                  </div>
+              {/* Top Live Badge */}
+              <div className="absolute top-4 left-4 bg-orange-600/95 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-lg z-10">
+                <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+                <span>সফলতা এমনেই আসে না - আসমা আক্তার</span>
+              </div>
 
-                  {/* Audio Toggle Button */}
-                  <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={toggleMute}
-                      className="bg-black/80 hover:bg-orange-600 text-white text-xs px-3.5 py-1.5 rounded-full backdrop-blur-md border border-white/20 transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-                    >
-                      {isMuted ? <FaVolumeMute className="text-amber-400" /> : <FaVolumeUp className="text-emerald-400" />}
-                      <span className="text-[11px] font-bold">{isMuted ? "Sound Off" : "Sound On"}</span>
-                    </button>
-                  </div>
+              {/* Audio Toggle Button */}
+              <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className="bg-black/80 hover:bg-orange-600 text-white text-xs px-3.5 py-1.5 rounded-full backdrop-blur-md border border-white/20 transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  {isMuted ? <FaVolumeMute className="text-amber-400" /> : <FaVolumeUp className="text-emerald-400" />}
+                  <span className="text-[11px] font-bold">{isMuted ? "Sound Off" : "Sound On"}</span>
+                </button>
+              </div>
 
-                  {/* Bottom Bar on Video */}
-                  <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-white bg-black/80 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 z-10">
-                    <div>
-                      <div className="text-[10px] text-gray-300 font-medium">Kitchen &amp; Cart Journey</div>
-                      <div className="text-xs sm:text-sm font-black text-amber-300">এর পেছনে লুকিয়ে থাকে কষ্ট আর পরিশ্রম</div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowVideo(false)}
-                      className="text-[11px] font-extrabold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-3 py-1.5 rounded-xl shadow transition-all cursor-pointer"
-                    >
-                      View Dish Photo
-                    </button>
-                  </div>
+              {/* Bottom Bar on Video with YouTube Story Link */}
+              <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-white bg-black/85 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 z-10">
+                <div className="min-w-0 pr-2">
+                  <div className="text-[10px] text-gray-300 font-medium truncate">Kitchen &amp; Cart Journey</div>
+                  <div className="text-xs sm:text-sm font-black text-amber-300 truncate">এর পেছনে লুকিয়ে থাকে কষ্ট আর পরিশ্রম</div>
                 </div>
-              ) : (
-                <div className="relative w-full h-full">
-                  <Image
-                    src="/images/haser-handi.jpg"
-                    alt="Clay Pot Haser Handi Curry by Asma Akter"
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                  {/* Badges on image */}
-                  <div className="absolute top-4 left-4 bg-orange-600/90 backdrop-blur-md text-white text-xs font-extrabold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
-                    <FaFire />
-                    Authentic Claypot Cooked
-                  </div>
-
-                  <div className="absolute top-4 right-4 z-10">
-                    <button
-                      type="button"
-                      onClick={() => setShowVideo(true)}
-                      className="bg-orange-600 hover:bg-orange-500 text-white text-xs px-3.5 py-1.5 rounded-full backdrop-blur-md transition-all shadow-md flex items-center gap-1.5 cursor-pointer font-bold"
-                    >
-                      <FaFilm className="text-white text-xs" />
-                      <span>Watch Story Video</span>
-                    </button>
-                  </div>
-
-                  <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-white bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">
-                        ৳
-                      </div>
-                      <div>
-                        <div className="text-[11px] text-gray-300">Starting from</div>
-                        <div className="text-sm font-black text-amber-400">৳ 480 BDT</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[11px] text-gray-300">Fresh Batch</div>
-                      <div className="text-xs font-bold text-emerald-400">Simmering Today</div>
-                    </div>
-                  </div>
-                </div>
-              )}
+                <a
+                  href="https://www.youtube.com/watch?v=AYVtkcTN0_U&t=110s"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-extrabold bg-[#cc0000] hover:bg-red-600 text-white px-3 sm:px-3.5 py-2 rounded-xl shadow-md transition-all transform hover:scale-105"
+                >
+                  <FaYoutube className="text-sm shrink-0" />
+                  <span>View Story on YouTube</span>
+                </a>
+              </div>
             </div>
           </div>
 

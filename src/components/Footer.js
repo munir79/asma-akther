@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FaFire, FaYoutube, FaFacebookF, FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, FaHeart } from "react-icons/fa";
 import { creatorSocialStats } from "@/data/creatorReels";
 
@@ -12,17 +13,23 @@ export default function Footer() {
           {/* Brand & Creator Bio */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 via-amber-500 to-red-600 flex items-center justify-center text-white text-lg shadow-lg">
-                <FaFire />
+              <div className="relative w-9 h-11 flex items-center justify-center shrink-0">
+                <Image
+                  src="/images/logo/aslogo.png"
+                  alt="Asma Akter Logo"
+                  width={36}
+                  height={44}
+                  className="w-auto h-full object-contain filter drop-shadow-[0_2px_8px_rgba(249,115,22,0.35)]"
+                />
               </div>
               <div>
                 <span className="text-lg font-black text-white tracking-tight">
                   ASMA AKTER
                 </span>
-                <span className="text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded ml-2">
-                  ফুড ভ্লগার
+                <span className="text-xs font-bold text-amber-400 bg-amber-500/15 border border-amber-500/35 px-1.5 py-0.5 rounded ml-2">
+                  উদ্যোক্তা
                 </span>
-                <p className="text-xs text-gray-400">Restaurant &amp; Food Kitchen • Agargaon</p>
+                <p className="text-xs text-gray-400">Restaurant &amp; Food Kitchen • Agargaon New Road</p>
               </div>
             </div>
 
