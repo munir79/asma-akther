@@ -7,7 +7,7 @@ export default function MobileQuickBar({ cartCount = 0, onOpenCart }) {
   return (
     <aside aria-label="Mobile quick actions" className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#0d0f15]/95 backdrop-blur-lg border-t border-gray-800 px-3 py-2 text-white">
       <div className="grid grid-cols-4 gap-1 text-center">
-        
+
         {/* Menu */}
         <a
           href="#menu"
@@ -44,7 +44,7 @@ export default function MobileQuickBar({ cartCount = 0, onOpenCart }) {
 
         {/* Call */}
         <a
-          href="tel:+8801712345678"
+          href="tel:+88017000"
           className="flex flex-col items-center justify-center py-1 text-gray-400 hover:text-emerald-400 text-[10px] font-semibold"
         >
           <FaPhoneAlt className="text-base mb-1 text-emerald-400" />

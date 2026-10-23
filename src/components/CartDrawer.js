@@ -45,7 +45,7 @@ export default function CartDrawer({
       `Please confirm my order and preparation time!`;
 
     const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/8801712345678?text=${encoded}`, "_blank");
+    window.open(`https://wa.me/8801712000?text=${encoded}`, "_blank");
     setIsOrdered(true);
     setTimeout(() => {
       setIsOrdered(false);
@@ -64,7 +64,7 @@ export default function CartDrawer({
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 pointer-events-auto">
         <div className="w-full sm:w-[420px] max-w-full bg-[#12151e] border-l border-gray-800 text-white flex flex-col shadow-2xl h-full">
-          
+
           {/* Header */}
           <div className="p-4 sm:p-5 border-b border-gray-800 flex items-center justify-between bg-[#151924] shrink-0 gap-3">
             <div className="flex items-center gap-2.5 min-w-0 pr-1">
@@ -167,27 +167,25 @@ export default function CartDrawer({
           {/* Order Details & Checkout Footer */}
           {cartItems.length > 0 && (
             <div className="p-5 border-t border-gray-800 bg-[#151924] space-y-4">
-              
+
               {/* Order Mode Toggle */}
               <div className="grid grid-cols-2 gap-2 bg-[#0e1119] p-1 rounded-xl border border-gray-800">
                 <button
                   onClick={() => setOrderType("delivery")}
-                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all ${
-                    orderType === "delivery"
+                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all ${orderType === "delivery"
                       ? "bg-orange-600 text-white shadow"
                       : "text-gray-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   <FaMotorcycle />
                   <span>Delivery (+৳60)</span>
                 </button>
                 <button
                   onClick={() => setOrderType("takeaway")}
-                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all ${
-                    orderType === "takeaway"
+                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all ${orderType === "takeaway"
                       ? "bg-orange-600 text-white shadow"
                       : "text-gray-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   <FaStore />
                   <span>Cart Pickup (Free)</span>

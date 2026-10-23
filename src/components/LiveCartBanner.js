@@ -28,14 +28,14 @@ export default function LiveCartBanner() {
         {/* Action badges */}
         <div className="flex items-center gap-3">
           <a
-            href="https://wa.me/8801712345678?text=Hello%20Asma%20Apu!%20I%20would%20like%20to%20order%20from%20your%20Agargaon%20kitchen."
+            href="https://wa.me/8801712300?text=Hello%20Asma%20Apu!%20I%20would%20like%20to%20order%20from%20your%20Agargaon%20kitchen."
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 bg-black/40 hover:bg-black/60 px-3 py-1 rounded-full text-white transition-colors"
           >
             <FaWhatsapp className="text-emerald-400 text-sm" />
             <span className="hidden md:inline">Hotline:</span>
-            <span className="font-bold">+880 1712-345678</span>
+            <span className="font-bold">+880 171200</span>
           </a>
 
           <button

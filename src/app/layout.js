@@ -76,7 +76,7 @@ export default function RootLayout({ children }) {
       "longitude": 90.3807
     },
     "url": "https://asmaakter-foodcart.com",
-    "telephone": "+8801712345678",
+    "telephone": "+8801700",
     "servesCuisine": ["Bangladeshi", "Street Food", "Clay Pot Curries", "Fresh Juices"],
     "priceRange": "BDT 120 - 750",
     "openingHoursSpecification": [

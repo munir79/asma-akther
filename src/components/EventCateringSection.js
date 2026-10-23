@@ -42,7 +42,7 @@ export default function EventCateringSection() {
       `Looking forward to confirming with Asma Akter's team!`;
 
     const encoded = encodeURIComponent(text);
-    window.open(`https://wa.me/8801712345678?text=${encoded}`, "_blank");
+    window.open(`https://wa.me/88017123000?text=${encoded}`, "_blank");
   };
 
   return (
@@ -51,7 +51,7 @@ export default function EventCateringSection() {
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-orange-600/10 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
@@ -76,11 +76,10 @@ export default function EventCateringSection() {
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => setSelectedPackageId(pkg.id)}
-                className={`cursor-pointer rounded-3xl p-6 border transition-all duration-300 flex flex-col justify-between relative ${
-                  isSelected
+                className={`cursor-pointer rounded-3xl p-6 border transition-all duration-300 flex flex-col justify-between relative ${isSelected
                     ? "bg-gradient-to-b from-[#1b1f2b] to-[#141722] border-orange-500 shadow-xl shadow-orange-600/20"
                     : "bg-[#12151e] border-gray-800 hover:border-gray-700"
-                }`}
+                  }`}
               >
                 {/* Badge */}
                 {pkg.badge && (
@@ -118,11 +117,10 @@ export default function EventCateringSection() {
                 <div className="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between">
                   <span className="text-[11px] text-gray-400">Min {pkg.minGuests} guests</span>
                   <span
-                    className={`text-xs font-bold px-3 py-1 rounded-full ${
-                      isSelected
+                    className={`text-xs font-bold px-3 py-1 rounded-full ${isSelected
                         ? "bg-orange-600 text-white"
                         : "bg-gray-800 text-gray-300"
-                    }`}
+                      }`}
                   >
                     {isSelected ? "Selected" : "Select"}
                   </span>
@@ -135,7 +133,7 @@ export default function EventCateringSection() {
         {/* Interactive Booking & Quotation Form */}
         <div className="bg-[#141822] border border-gray-800 rounded-3xl p-6 sm:p-10 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
+
             {/* Form Inputs (Left) */}
             <div className="lg:col-span-7 space-y-5">
               <div>

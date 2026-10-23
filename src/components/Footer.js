@@ -9,7 +9,7 @@ export default function Footer() {
     <footer className="bg-[#090b10] border-t border-gray-800/90 text-gray-400 text-xs sm:text-sm pt-16 pb-24 lg:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-12">
-          
+
           {/* Brand & Creator Bio */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
@@ -157,7 +157,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <FaPhoneAlt className="text-emerald-400 text-xs shrink-0" />
-                <span>Hotline: +880 1712-345678</span>
+                <span>Hotline: +880 171200</span>
               </div>
               <div className="flex items-center gap-2">
                 <FaEnvelope className="text-amber-400 text-xs shrink-0" />
