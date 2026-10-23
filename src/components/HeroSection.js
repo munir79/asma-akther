@@ -20,14 +20,14 @@ import { creatorSocialStats } from "@/data/creatorReels";
 
 const heroSlides = [
   {
-    image: "/images/hero/asmahero.png",
+    image: "/images/hero/asmahero.webp",
     alt: "Asma Akter at Agargaon Street Cart",
     location: "Agargaon New Road Live",
     role: "Content Creator & Street Chef",
     badge: "Specialist",
   },
   {
-    image: "/images/hero/asma-juice.jpg",
+    image: "/images/hero/asma-juice.webp",
     alt: "Asma Akter Fresh Dragon Fruit Juice Cart",
     location: "Fresh Dragon Fruit Juice Bar",
     role: "Creator & Juice Master",
@@ -47,6 +47,16 @@ export default function HeroSection() {
     return () => clearInterval(timer);
   }, [isHovered]);
 
+  useEffect(() => {
+    // Preload remaining hero slide images in background so slide rotation is instantaneous
+    if (typeof window !== "undefined") {
+      heroSlides.slice(1).forEach((slide) => {
+        const img = new window.Image();
+        img.src = slide.image;
+      });
+    }
+  }, []);
+
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   };
@@ -59,7 +69,7 @@ export default function HeroSection() {
       {/* Background Image: Anchored left-bottom so the bottom-left vibrant green leaves and food table are ALWAYS fully visible */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/hero/hero-bacground-image.png"
+          src="/images/hero/hero-bacground-image.webp"
           alt="Night Street Food Market by Asma Akter"
           fill
           priority

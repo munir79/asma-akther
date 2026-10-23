@@ -10,7 +10,8 @@ import {
   FaPepperHot,
   FaVolumeMute,
   FaVolumeUp,
-  FaFilm,
+  FaPlay,
+  FaPause,
   FaYoutube
 } from "react-icons/fa";
 
@@ -19,24 +20,156 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
   const [selectedPortion, setSelectedPortion] = useState("Regular Handi (1-2 persons)");
   const [isAdded, setIsAdded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [showVideo, setShowVideo] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
   const cardVideoRef = useRef(null);
+  const sectionRef = useRef(null);
 
-  // Guarantee that autoplay starts smoothly without browser restrictions
+  // Defer heavy video buffering until hero page has loaded or section is approached
   useEffect(() => {
-    if (cardVideoRef.current) {
-      cardVideoRef.current.defaultMuted = true;
-      cardVideoRef.current.muted = isMuted;
-      cardVideoRef.current.play().catch(() => { });
-    }
-  }, [showVideo, isMuted]);
+    if (typeof window === "undefined") return;
 
-  const toggleMute = () => {
-    const nextMuted = !isMuted;
-    setIsMuted(nextMuted);
-    if (cardVideoRef.current) {
-      cardVideoRef.current.muted = nextMuted;
+    // Fast fallback: activate video loading after 1.2s so hero gets 100% initial bandwidth
+    const timer = setTimeout(() => {
+      setShouldLoadVideo(true);
+    }, 1200);
+
+    // Scroll trigger: if user scrolls down towards video, start immediately
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoadVideo(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { rootMargin: "350px" }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, []);
+
+  // Sync muted state directly to DOM element whenever isMuted changes
+  useEffect(() => {
+    const video = cardVideoRef.current;
+    if (!video) return;
+    video.muted = isMuted;
+    if (!isMuted) {
+      video.volume = 1.0;
+    }
+  }, [isMuted]);
+
+  // Handle autoPlay and tab visibility change so video resumes automatically
+  useEffect(() => {
+    const video = cardVideoRef.current;
+    if (!video || !shouldLoadVideo) return;
+
+    video.muted = isMuted;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          // Autoplay with sound or battery saver prevented, keep playing state synced
+          setIsPlaying(false);
+        });
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && cardVideoRef.current) {
+        cardVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [shouldLoadVideo]);
+
+  // Dedicated sound toggle inside direct user click gesture (works on iOS Safari and mobile Chrome)
+  const toggleMute = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const video = cardVideoRef.current;
+    if (!video) return;
+
+    if (isMuted) {
+      video.muted = false;
+      video.volume = 1.0;
+      setIsMuted(false);
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.warn("Unmute play note:", err);
+          });
+      }
+    } else {
+      video.muted = true;
+      setIsMuted(true);
+    }
+  };
+
+  // Play / Pause toggle
+  const togglePlay = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const video = cardVideoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video.play().then(() => setIsPlaying(true)).catch(() => {});
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  // Auto-restart from beginning when video ends (never gets stuck on mobile)
+  const handleVideoEnded = () => {
+    const video = cardVideoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => setIsPlaying(true)).catch(() => {});
+      }
+    }
+  };
+
+  // Safeguard for mobile browsers: if video gets within 200ms of end without triggering loop event
+  const handleTimeUpdate = () => {
+    const video = cardVideoRef.current;
+    if (!video || !video.duration) return;
+    if (video.currentTime >= video.duration - 0.25) {
+      video.currentTime = 0;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => setIsPlaying(true)).catch(() => {});
+      }
+    }
+  };
+
+  // Resume smoothly if mobile browser buffers or stalls
+  const handleStalled = () => {
+    const video = cardVideoRef.current;
+    if (video && isPlaying && video.paused) {
+      video.play().catch(() => {});
     }
   };
 
@@ -64,13 +197,13 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
   };
 
   return (
-    <section id="signature-handi" className="relative py-20 lg:py-28 overflow-hidden bg-[#0a0c12]">
+    <section ref={sectionRef} id="signature-handi" className="relative py-20 lg:py-28 overflow-hidden bg-[#0a0c12]">
       {/* Decorative Warm Ambient Glows */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-orange-600/10 rounded-full blur-[140px] pointer-events-none z-[1]" />
       <div className="absolute top-1/3 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-[130px] pointer-events-none z-[1]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
+        
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/40 text-orange-400 text-xs font-bold tracking-wider uppercase mb-3 backdrop-blur-md shadow-sm">
@@ -87,7 +220,7 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
 
         {/* Feature Grid: Left Side Video & Right Side Content */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-
+          
           {/* Left Visual Column: Featured Real Video Player with Story link */}
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-2 border-amber-500/40 shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(245,158,11,0.25)] group bg-black">
@@ -97,27 +230,71 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
                 loop
                 muted={isMuted}
                 playsInline
+                webkit-playsinline="true"
+                x5-playsinline="true"
+                poster="/video/haser-handi-poster.jpg"
+                preload={shouldLoadVideo ? "auto" : "none"}
+                onEnded={handleVideoEnded}
+                onTimeUpdate={handleTimeUpdate}
+                onStalled={handleStalled}
+                onWaiting={handleStalled}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
                 className="w-full h-full object-cover"
               >
-                <source src="/video/haser-handi-story.webm" type="video/webm" />
-                <source src={`/video/${encodeURI("সফলতা এমনেই আসে না_ এর পেছনে লুকিয়ে থাকে কষ্ট আর পরিশ্রম । (4_7894.webm")}`} type="video/webm" />
+                {shouldLoadVideo && (
+                  <>
+                    <source src="/video/haser-handi-story.mp4" type="video/mp4" />
+                    <source src="/video/haser-handi-story-mobile.mp4" type="video/mp4" />
+                    <source src="/video/haser-handi-story.webm" type="video/webm" />
+                  </>
+                )}
               </video>
 
               {/* Top Live Badge */}
-              <div className="absolute top-4 left-4 bg-orange-600/95 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-lg z-10">
+              <div className="absolute top-4 left-4 bg-orange-600/95 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-lg z-10 pointer-events-none">
                 <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
                 <span>সফলতা এমনেই আসে না - আসমা আক্তার</span>
               </div>
 
-              {/* Audio Toggle Button */}
-              <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+              {/* Controls: Play/Pause and Audio Toggle */}
+              <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+                {/* Play / Pause Toggle Button */}
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  className="bg-black/80 hover:bg-orange-600 text-white text-xs w-8 h-8 rounded-full backdrop-blur-md border border-white/20 transition-all shadow-md flex items-center justify-center cursor-pointer"
+                  aria-label={isPlaying ? "Pause video" : "Play video"}
+                >
+                  {isPlaying ? (
+                    <FaPause className="text-[10px]" />
+                  ) : (
+                    <FaPlay className="text-[10px] ml-0.5 text-orange-400" />
+                  )}
+                </button>
+
+                {/* Sound Unmute / Mute Button */}
                 <button
                   type="button"
                   onClick={toggleMute}
-                  className="bg-black/80 hover:bg-orange-600 text-white text-xs px-3.5 py-1.5 rounded-full backdrop-blur-md border border-white/20 transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className={`text-xs px-3.5 py-1.5 rounded-full backdrop-blur-md border transition-all shadow-md flex items-center gap-1.5 cursor-pointer font-bold ${
+                    isMuted
+                      ? "bg-black/80 hover:bg-orange-600 text-white border-white/20"
+                      : "bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-emerald-500/30 animate-pulse"
+                  }`}
+                  aria-label={isMuted ? "Unmute video" : "Mute video"}
                 >
-                  {isMuted ? <FaVolumeMute className="text-amber-400" /> : <FaVolumeUp className="text-emerald-400" />}
-                  <span className="text-[11px] font-bold">{isMuted ? "Sound Off" : "Sound On"}</span>
+                  {isMuted ? (
+                    <>
+                      <FaVolumeMute className="text-amber-400" />
+                      <span className="text-[11px]">Sound Off</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaVolumeUp className="text-white" />
+                      <span className="text-[11px]">Sound On</span>
+                    </>
+                  )}
                 </button>
               </div>
 
@@ -143,7 +320,7 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
           {/* Right Ordering & Details Column */}
           <div className="lg:col-span-6 space-y-6">
             <div className="bg-[#131722]/90 backdrop-blur-xl border border-gray-700/80 p-6 sm:p-8 rounded-3xl space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
-
+              
               {/* Secret Flavors Highlight */}
               <div>
                 <h3 className="text-xl font-bold text-white flex items-center gap-2">
@@ -175,10 +352,11 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
                     <button
                       key={portion.name}
                       onClick={() => setSelectedPortion(portion.name)}
-                      className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${selectedPortion === portion.name
+                      className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${
+                        selectedPortion === portion.name
                           ? "bg-gradient-to-r from-orange-600/30 to-amber-600/20 border-orange-500 text-white font-bold"
                           : "bg-[#11131a] border-gray-800 text-gray-300 hover:border-gray-700"
-                        }`}
+                      }`}
                     >
                       <div className="text-xs leading-tight line-clamp-1">{portion.name}</div>
                       <div className="text-sm font-extrabold text-amber-400 mt-1">৳ {portion.price}</div>
@@ -198,10 +376,11 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
                     <button
                       key={spice}
                       onClick={() => setSelectedSpice(spice)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${selectedSpice === spice
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
+                        selectedSpice === spice
                           ? "bg-red-500/20 border-red-500 text-red-300"
                           : "bg-[#11131a] border-gray-800 text-gray-400 hover:text-gray-200"
-                        }`}
+                      }`}
                     >
                       {spice}
                     </button>
@@ -218,10 +397,11 @@ export default function HaserHandiSpotlight({ onAddToCart }) {
 
                 <button
                   onClick={handleAdd}
-                  className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg cursor-pointer ${isAdded
+                  className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg cursor-pointer ${
+                    isAdded
                       ? "bg-emerald-600 text-white"
                       : "bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-orange-600/30 hover:scale-[1.02]"
-                    }`}
+                  }`}
                 >
                   {isAdded ? (
                     <>
